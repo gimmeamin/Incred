@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RNG RPG Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #e9ecef;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+        }
+
+        #container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        #game, #shop, #jobs {
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+
+        #game {
+            width: 350px;
+        }
+
+        #shop, #jobs {
+            width: 250px;
+        }
+
+        h1 {
+            color: #343a40;
+            font-size: 28px;
+            margin: 0 0 20px;
+        }
+
+        #difficulty, #region {
+            margin-bottom: 20px;
+        }
+
+        #difficulty label, #region label {
+            margin-right: 10px;
+        }
+
+        select {
+            padding: 8px;
+            font-size: 16px;
+            width: 120px;
+        }
+
+        #stats, #gameplay {
+            margin-bottom: 20px;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        #stats p, #gameplay p {
+            font-size: 16px;
+            margin: 5px 0;
+            color: #495057;
+        }
+
+        #input-area {
+            margin-bottom: 20px;
+        }
+
+        input[type="number"] {
+            padding: 10px;
+            font-size: 16px;
+            width: 100px;
+            text-align: center;
+            margin-right: 10px;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #28a745;
+            color: #ffffff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+
+        #messages {
+            font-size: 16px;
+            color: #333;
+            margin-top: 10px;
+        }
+
+        #shop h2, #jobs h2 {
+            color: #343a40;
+            font-size: 20px;
+            margin-top: 0;
+        }
+
+        #shop p, #jobs p {
+            font-size: 16px;
+            color: #495057;
+        }
+
+        .job-button {
+            margin: 5px 0;
+            padding: 5px;
+            font-size: 14px;
+            background-color: #007bff;
+            color: #ffffff;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        .job-button:hover {
+            background-color: #0056b3;
+        }
+
+        @media (max-width: 768px) {
+            #container {
+                flex-direction: column;
+                align-items: center;
+            }
+            #game, #shop, #jobs {
+                width: 90%;
+                max-width: 500px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <div id="jobs">
+            <h2>Jobs</h2>
+            <div id="commoners">
+                <h3>Commoners</h3>
+                <button class="job-button" onclick="showBonus('Beggar', 'Gain 5% more EXP')">Beggar</button>
+                <button class="job-button" onclick="showBonus('Farmer', 'Increase crop yield by 10%')">Farmer</button>
+                <button class="job-button" onclick="showBonus('Craftsman', 'Craft items with 15% less materials')">Craftsman</button>
+                <button class="job-button" onclick="showBonus('Blacksmith', 'Weapons deal 5% more damage')">Blacksmith</button>
+                <button class="job-button" onclick="showBonus('Merchant', 'Earn 10% more gold from sales')">Merchant</button>
+                <button class="job-button" onclick="showBonus('Guildmaster', 'Recruit allies with 10% better stats')">Guildmaster</button>
+            </div>
+            <div id="knights">
+                <h3>Knights</h3>
+                <button class="job-button" onclick="showBonus('Squire', 'Placeholder bonus')">Squire</button>
+                <button class="job-button" onclick="showBonus('Footman', 'Placeholder bonus')">Footman</button>
+                <button class="job-button" onclick="showBonus('Knight', 'Placeholder bonus')">Knight</button>
+                <button class="job-button" onclick="showBonus('Cavalier', 'Placeholder bonus')">Cavalier</button>
+                <button class="job-button" onclick="showBonus('Paladin', 'Placeholder bonus')">Paladin</button>
+                <button class="job-button" onclick="showBonus('Champion', 'Placeholder bonus')">Champion</button>
+            </div>
+            <div id="magicians">
+                <h3>Magicians</h3>
+                <button class="job-button" onclick="showBonus('Apprentice', 'Placeholder bonus')">Apprentice</button>
+                <button class="job-button" onclick="showBonus('Adept', 'Placeholder bonus')">Adept</button>
+                <button class="job-button" onclick="showBonus('Mage', 'Placeholder bonus')">Mage</button>
+                <button class="job-button" onclick="showBonus('Sorcerer', 'Placeholder bonus')">Sorcerer</button>
+                <button class="job-button" onclick="showBonus('Warlock', 'Placeholder bonus')">Warlock</button>
+                <button class="job-button" onclick="showBonus('Archmage', 'Placeholder bonus')">Archmage</button>
+            </div>
+            <p id="bonus-display"></p>
+        </div>
+        <div id="game">
+            <h1>Random Number RPG</h1>
+            <div id="difficulty">
+                <label for="difficulty-selector">Difficulty:</label>
+                <select id="difficulty-selector">
+                    <option value="1">Easy</option>
+                    <option value="2">Medium</option>
+                    <option value="3">Hard</option>
+                </select>
+            </div>
+            <div id="region">
+                <label for="region-selector">Region:</label>
+                <select id="region-selector">
+                    <option value="Thornvale">Thornvale</option>
+                    <option value="Ironhold">Ironhold</option>
+                    <option value="Dragonskeep">Dragonskeep</option>
+                </select>
+            </div>
+            <div id="stats">
+                <p>Level: <span id="level">1</span></p>
+                <p>Player HP: <span id="player-hp">100</span></p>
+                <p>EXP: <span id="exp">0</span></p>
+                <p>EXP to Next Level: <span id="exp-to-next-level">100</span></p>
+            </div>
+            <div id="gameplay">
+                <p>Guess a number between <span id="range">1-<span id="max-range"></span></span></p>
+                <p>Damage Range: <span id="damage-range">5-15</span></p>
+                <p>Enemy Type: <span id="enemy-type">Goblin</span></p>
+            </div>
+            <div id="input-area">
+                <input type="number" id="guess" min="1" placeholder="Your guess">
+                <button onclick="makeGuess()">Guess</button>
+            </div>
+            <div id="guesses">
+                <p>Your guesses: <span id="guesses-list"></span></p>
+            </div>
+            <div id="messages"></div>
+            <button id="new-game-button" onclick="startNewGame()" style="display:none;">Start New Game</button>
+        </div>
+        <div id="shop">
+            <h2>Shop</h2>
+            <p>Items and upgrades will be added here later.</p>
+        </div>
+    </div>
+    <script>
+        let baseHP = 100;
+        let playerHP = baseHP;
+        let maxRange;
+        let enemyNumber;
+        let guesses = [];
+        let exp = 0;
+        let minDamage;
+        let maxDamage;
+        let enemyType;
+        let rangeLow;
+        let rangeHigh;
+        let level = 1;
+        let expToNextLevel = 100;
+
+        const difficultySettings = {
+            1: {
+                maxRange: 100,
+                minDamage: 5,
+                maxDamage: 15,
+                enemies: [
+                    { type: "Goblin", range: [1, 10] },
+                    { type: "Wolf", range: [1, 50] },
+                    { type: "Imp", range: [1, 100] }
+                ]
+            },
+            2: {
+                maxRange: 500,
+                minDamage: 15,
+                maxDamage: 30,
+                enemies: [
+                    { type: "Ogre", range: [1, 200] },
+                    { type: "Harpy", range: [1, 350] },
+                    { type: "Demon", range: [1, 500] }
+                ]
+            },
+            3: {
+                maxRange: 1000,
+                minDamage: 30,
+                maxDamage: 50,
+                enemies: [
+                    { type: "Dragon", range: [1, 600] },
+                    { type: "Lich", range: [1, 800] },
+                    { type: "Titan", range: [1, 1000] }
+                ]
+            }
+        };
+
+        function showBonus(job, bonus) {
+            document.getElementById('bonus-display').innerText = `Job: ${job}, Bonus: ${bonus}`;
+        }
+
+        document.getElementById('guess').addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') makeGuess();
+        });
+
+        document.getElementById('difficulty-selector').addEventListener('change', startNewGame);
+
+        function updateStats() {
+            document.getElementById('player-hp').innerText = playerHP;
+            document.getElementById('range').innerText = `${rangeLow}-${rangeHigh}`;
+            document.getElementById('damage-range').innerText = `${minDamage}-${maxDamage}`;
+            document.getElementById('enemy-type').innerText = enemyType;
+            document.getElementById('exp').innerText = exp;
+            document.getElementById('level').innerText = level;
+            document.getElementById('exp-to-next-level').innerText = expToNextLevel;
+            document.getElementById('guesses-list').innerText = guesses.join(', ');
+        }
+
+        function makeGuess() {
+            if (playerHP <= 0) return;
+
+            const guess = parseInt(document.getElementById('guess').value);
+            if (!guess || guess < rangeLow || guess > rangeHigh || guesses.includes(guess)) {
+                alert("Please enter a valid number within the range that you haven't guessed before!");
+                return;
+            }
+
+            guesses.push(guess);
+            const enemyDamage = Math.floor(Math.random() * (maxDamage - minDamage + 1)) + minDamage;
+
+            if (guess === enemyNumber) {
+                const expGained = rangeHigh;
+                exp += expGained;
+                document.getElementById('messages').innerText = `You guessed correctly! The enemy is defeated! You gained ${expGained} EXP.`;
+
+                if (exp >= expToNextLevel) {
+                    level++;
+                    exp -= expToNextLevel;
+                    expToNextLevel = Math.floor(expToNextLevel * 1.5);
+                    baseHP = Math.round(baseHP * 1.2);
+                    playerHP = baseHP; // Reset HP to the new base value
+                    document.getElementById('messages').innerText += ` You have leveled up to Level ${level}! Your HP is now ${playerHP}.`;
+                }
+
+                updateStats();
+                endGame();
+            } else {
+                playerHP -= enemyDamage;
+                document.getElementById('messages').innerText = `Wrong guess! The correct number is ${guess < enemyNumber ? 'Higher' : 'Lower'}. The enemy attacks and deals ${enemyDamage} damage!`;
+
+                if (playerHP <= 0) {
+                    document.getElementById('messages').innerText = `You have been defeated by the enemy. Game over!`;
+                    playerHP = 0;
+                    endGame();
+                }
+
+                updateStats();
+            }
+
+            document.getElementById('guess').value = '';
+        }
+
+        function endGame() {
+            document.getElementById('new-game-button').style.display = 'block';
+        }
+
+        function startNewGame() {
+            const difficulty = parseInt(document.getElementById('difficulty-selector').value);
+            const settings = difficultySettings[difficulty];
+            
+            maxRange = settings.maxRange;
+            minDamage = settings.minDamage;
+            maxDamage = settings.maxDamage;
+            const enemy = settings.enemies[Math.floor(Math.random() * settings.enemies.length)];
+            enemyType = enemy.type;
+            rangeLow = enemy.range[0];
+            rangeHigh = enemy.range[1];
+            enemyNumber = Math.floor(Math.random() * (rangeHigh - rangeLow + 1)) + rangeLow;
+
+            guesses = [];
+            playerHP = baseHP;
+            exp = 0;
+            document.getElementById('new-game-button').style.display = 'none';
+            updateStats();
+        }
+
+        startNewGame(); // Initialize game on page load
+    </script>
+</body>
+</html>
